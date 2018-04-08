@@ -54,7 +54,7 @@ class SparkJobBuilder[Model, Payload] {
     if(sink == null && modelSink == null) throw new IllegalArgumentException("Sink and Model Sink Must Not Null")
     if(transformer == null) throw new IllegalArgumentException("Must provide a transformer")
     if(topic == null) throw new IllegalArgumentException("Must Provide a Topic")
-    val consumerGroupId = Option(this.groupId).getOrElse(ZookeeperConfiguration.ZKGroupId)
+    val consumerGroupId = Option(this.groupId).getOrElse(ZookeeperConfiguration.zkGroupId)
     val zkProperties = Map("group.id" -> consumerGroupId, "zookeeper.connect" -> ZookeeperConfiguration.zkHost)
     val kafkaStreamSource = new KafkaStreamSource(ssc, topic, zkProperties)
     val checkPointer = Option(new CheckPointer(zkProperties))

@@ -12,7 +12,6 @@ import org.spark.streaming.common.sparkjob.sink.EsSinkUserSnapShot
 import org.spark.streaming.common.utils.{BaseSLog, Logger}
 
 object SparkJobMain extends App {
-  Logger.log(this.getClass, INFO, BaseSLog(s"Creating Streaming Context of app: $appName"))
 
   if(args.length < 1) {
     Logger.log(this.getClass, INFO, BaseSLog(s"Must provide configuration file path"))
@@ -20,6 +19,7 @@ object SparkJobMain extends App {
   }
   private val filePath = args(0)
   Config.init(filePath)
+  Logger.log(this.getClass, INFO, BaseSLog(s"Creating Streaming Context of app: $appName"))
   val ssc = new StreamingContext(sparkConfiguration, Seconds(streamingInterval))
   try {
     val mapper = new ObjectMapper()

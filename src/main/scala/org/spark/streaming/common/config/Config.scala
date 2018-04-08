@@ -25,9 +25,13 @@ object Config {
     }
   }
 
-  def getProperty(props: String): Option[String] = configMap.getOrElse(props, None) match {
+  def getProperty(props: String): Option[String] = configMap.get(props) match {
     case Some(x) => Some(x.toString)
     case _ => None
+  }
+
+  def getMap(): Map[String, String] = {
+    configMap
   }
 
 }

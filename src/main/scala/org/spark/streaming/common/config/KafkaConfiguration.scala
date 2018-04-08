@@ -6,7 +6,7 @@ object KafkaConfiguration {
   val NumPartition = "spark.StreamingApp.numPartitions"
 
   val properyLoader: (String) => Option[String] = Config.getProperty
-  val config = GenericConfiguration(Map(KafkaBrokers -> properyLoader(kafkaBrokers),
+  val config = GenericConfiguration(Map(KafkaBrokers -> properyLoader(KafkaBrokers),
     Repartition -> properyLoader(Repartition),
     NumPartition -> properyLoader(NumPartition)))
 
