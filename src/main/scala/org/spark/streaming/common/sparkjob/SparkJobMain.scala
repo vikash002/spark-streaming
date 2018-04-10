@@ -29,11 +29,11 @@ object SparkJobMain extends App {
       .run()
   } catch {
     case e: Exception => {
-      Logger.log(this.getClass, ERROR, BaseSLog(s"Exceptions in executing SFCMain: ${e.getMessage}", e))
+      Logger.log(this.getClass, ERROR, BaseSLog(s"Exceptions in executing SparkMain: ${e.getMessage}", e))
       throw e
     }
   } finally sys.ShutdownHookThread {
-    Logger.log(this.getClass, INFO, BaseSLog(s"Gracefully stopping SFCMain"))
+    Logger.log(this.getClass, INFO, BaseSLog(s"Gracefully stopping SparkMain"))
     ssc.stop(stopSparkContext = true, stopGracefully = true)
     Logger.log(this.getClass, ERROR, BaseSLog(s"SFCMain stopped"))
   }

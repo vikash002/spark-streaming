@@ -8,8 +8,10 @@ object UserTaskTransformation extends AbstractModelTransformer[GenericSnapShot, 
 
   override def transform(payload: UserEventPayload) = {
     val pickUpLocation = Location(payload.pickUpLat, payload.pickUpLon)
-    val dropLocation = Location(payload.dropLat, payload.dropLog)
-    var snapShot = new UserEventSnapShot(payload.userId, 0.0, pickUpLocation, dropLocation, null, null, 0.0, payload.pickUpTime)
+    val dropLocation = Location(payload.dropLat, payload.dropLon)
+    val estimatedTime = if(payload.dropTime.isDefined)  (payload.dropTime.get - payload.pickUpTime) else 0.0
+
+    var snapShot = new UserEventSnapShot(payload.userId, 0.0, pickUpLocation, dropLocation, null, null, estimatedTime, payload.pickUpTime)
     snapShot.enrichMe(new GeoHashEnricherUserSnapShot(
       Some(new DistanceEnricher(None))
     ))

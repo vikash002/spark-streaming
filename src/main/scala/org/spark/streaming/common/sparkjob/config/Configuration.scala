@@ -1,7 +1,11 @@
 package org.spark.streaming.common.sparkjob.config
 
+import java.util.Properties
+
 import org.apache.spark.SparkConf
 import org.spark.streaming.common.config.{Config, GenericConfiguration}
+
+import scala.collection.JavaConversions._
 
 object Configuration {
   final val MaxCores = "spark.StreamingApp.max.cores"
@@ -21,6 +25,11 @@ object Configuration {
   final val UserBookingEventPartitions = "spark.StreamingApp.userBookingPartition"
   final val DriverEventKafkaTopic = "driverEvent.kafka.topic"
   final val DriverEventPartition = "spark.streamingApp.driverEventPartition"
+  final val KafkaBatchSize = "spark.producer.batchSize"
+  final val KafkaProducerClientId = "spark.producer.clientId"
+  final val KafkaProducerAcks = "spark.producer.Acks"
+  final val KafkaLingerMs = "spark.producer.LingerMs"
+  final val KafkaBrokers = "spark.StreamingApp.kafkaBrokers"
 
   private var propertyLoader: String => Option[String] = Config.getProperty
 
@@ -40,7 +49,12 @@ object Configuration {
       UserBookingtEventKafkaTopic -> propertyLoader(UserBookingtEventKafkaTopic),
       UserBookingEventPartitions -> propertyLoader(UserBookingEventPartitions),
       DriverEventKafkaTopic -> propertyLoader(DriverEventKafkaTopic),
-      DriverEventPartition -> propertyLoader(DriverEventPartition)
+      DriverEventPartition -> propertyLoader(DriverEventPartition),
+      KafkaBatchSize -> propertyLoader(KafkaBatchSize),
+      KafkaProducerClientId -> propertyLoader(KafkaProducerClientId),
+      KafkaProducerAcks -> propertyLoader(KafkaProducerAcks),
+      KafkaLingerMs -> propertyLoader(KafkaLingerMs),
+      KafkaBrokers -> propertyLoader(KafkaBrokers)
   ))
 
   def appName = config.configValueAsString(AppName, "Spark Streaming App")
@@ -75,12 +89,37 @@ object Configuration {
 
   def driverEventPartition = config.configValueAsInt(DriverEventPartition, 1)
 
+  def kafkaProducerClientId: String = config.configValueAsString(KafkaProducerClientId, "")
+
+  def kafkaProducerAcks: Int = config.configValueAsInt(KafkaProducerAcks, 1)
+
+  def kafkaBatchSize: Int = config.configValueAsInt(KafkaBatchSize, 16384)
+
+  def kafkaLingerMs: Long = config.configValueAsLong(KafkaLingerMs, 500)
+
+  def kafkaBrokers: String = config.configValue(KafkaBrokers)
+
   private[config] def overrideConfig(key: String, value: String) = {
     config.setConfig(key, value)
   }
 
   private[config] def setPropertyLoader(propertyLoader: (String) => Option[String]): Unit = {
     this.propertyLoader = propertyLoader
+  }
+
+
+  def kafkaProducerConfiguration: Properties = {
+    val producerProperties = new Properties()
+    producerProperties.putAll(Map(
+      "client.id" -> kafkaProducerClientId,
+      "bootstrap.servers" -> kafkaBrokers,
+      "acks" -> kafkaProducerAcks.toString,
+      "batch.size" -> kafkaBatchSize.toString,
+      "linger.ms" -> kafkaLingerMs.toString,
+      "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
+      "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
+    ))
+    producerProperties
   }
 
   def sparkConfiguration = {

@@ -9,7 +9,7 @@ class UserEventPayload(var userId: String,
                        var pickUpLat: Double,
                        var pickUpLon: Double,
                        var dropLat: Double,
-                       var dropLog: Double,
+                       var dropLon: Double,
                        var pickUpTime: Long,
                        var dropTime: Option[Long]) extends Uniqueness[String] with Serializable {
   override def uniqueBy = userId

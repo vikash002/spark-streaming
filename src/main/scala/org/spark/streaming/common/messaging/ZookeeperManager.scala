@@ -30,7 +30,7 @@ sealed class ZookeeperManager(params: Map[String, String]) {
   }
 
   class KafkaZookeeperRecorder {
-    private val groupId = params("groupId")
+    private val groupId = params("group.id")
 
     def commitOffset(commit: Map[TopicAndPartition, Long]): Unit = {
       if(zKClient == null) throw new IllegalStateException("Zookeeper client is null")
