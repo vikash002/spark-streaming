@@ -1,3 +1,4 @@
+/*
 package org.spark.streaming.common
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
@@ -34,3 +35,4 @@ trait EmbeddedRedis extends FunSuite with BeforeAndAfterAll {
     super.afterAll()
   }
 }
+*/

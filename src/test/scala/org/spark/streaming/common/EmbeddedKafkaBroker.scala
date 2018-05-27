@@ -33,7 +33,7 @@ trait EmbeddedKafkaBroker extends FunSuite with BeforeAndAfterAll {
   }
 
   protected def createTopic(name: String, numPartition: Int): Unit = {
-    val zkClient = new ZkClient(s"127.0.0.1:${EmbeddedKafkaConfig.defaultConfig.zooKeeperPort}", 10000, 8000, ZKStringSerializer)
+    val zkClient = new ZkClient(s"127.0.0.1:${EmbeddedKafkaConfig.defaultConfig.zooKeeperPort}", 10000, 8000)
     AdminUtils.createTopic(zkClient, name, numPartition, 1)
   }
 

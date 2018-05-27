@@ -7,6 +7,8 @@ import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.spark.streaming.common.config.KafkaConfiguration.{kafkaBrokers, repartition, numPartition}
+import org.spark.streaming.common.utils.{BaseSLog, Logger}
+import org.apache.log4j.Level._
 
 class KafkaStreamSource (ssc: StreamingContext, topics: String, zKProperties: Map[String, String]) {
   val brokers: String = kafkaBrokers
@@ -14,7 +16,9 @@ class KafkaStreamSource (ssc: StreamingContext, topics: String, zKProperties: Ma
   val kafkaParams = Map("metadata.broker.list" -> brokers, "auto.offset.reset" -> "largest")
   val numberOfRecievers = 3
 
-  def getStream(): DStream[(String, String)] = {
+  def getStream: DStream[(String, String)] = {
+    Logger.log(this.getClass, INFO, BaseSLog(message="Initiating KafkaPipeline[%s]... Topics [%s], Brokers [%s]".format(hashCode(), topics, brokers),tag="CONSUMER"))
+
     val dStream: InputDStream[(String, String)] =
       getTopicAndPartionsWithOffSet(topicSet) match {
         case None => KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, topicSet)
@@ -28,7 +32,7 @@ class KafkaStreamSource (ssc: StreamingContext, topics: String, zKProperties: Ma
     val topicAndPartitionWithOffset = ZookeeperManager.get(zKProperties).kafkaRecorder.getOffset(topicSet.toSeq)
 
     val offsetDistinctValues = topicAndPartitionWithOffset.values.toList.distinct
-    if (topicAndPartitionWithOffset.isEmpty || offsetDistinctValues.length == 1 && offsetDistinctValues.head == 0) None
+    if (topicAndPartitionWithOffset.isEmpty || (offsetDistinctValues.length == 1 && offsetDistinctValues.head == 0)) None
     else Option(topicAndPartitionWithOffset)
   }
 

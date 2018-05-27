@@ -4,10 +4,12 @@ import java.util.Properties
 
 import kafka.common.TopicAndPartition
 import kafka.consumer.ConsumerConfig
-import kafka.utils.{ZKGroupTopicDirs, ZKStringSerializer, ZkUtils}
+import kafka.utils.{ZKStringSerializer, ZKGroupTopicDirs, ZkUtils}
 import org.I0Itec.zkclient.ZkClient
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.kafka.{HasOffsetRanges, OffsetRange}
+import org.spark.streaming.common.utils.{BaseSLog, Logger}
+import org.apache.log4j.Level._
 
 import scala.collection.mutable
 
@@ -25,7 +27,6 @@ sealed class ZookeeperManager(params: Map[String, String]) {
 
     zKClient = new ZkClient(consumerConfig.zkConnect, consumerConfig.zkSessionTimeoutMs, consumerConfig.zkConnectionTimeoutMs, ZKStringSerializer)
     kafkaRecorder = new KafkaZookeeperRecorder
-
     this
   }
 
@@ -40,7 +41,7 @@ sealed class ZookeeperManager(params: Map[String, String]) {
           val zkPath = s"${topicDir.consumerOffsetDir}/${topicAndPart.partition}"
           ZkUtils.updatePersistentPath(zKClient, zkPath, offset.toString)
         } catch {
-          case e: Exception => ""
+          case e: Exception => Logger.log(this.getClass, ERROR, BaseSLog(s"error occurs while comming offeset" + e.getMessage))
         }
       }
     }
@@ -97,7 +98,7 @@ object ZookeeperManager {
       } else List().iterator
     }).collect().toList
     if(zookeeperOffsets.nonEmpty) {
-      //TODO log
+      Logger.log(this.getClass, INFO, BaseSLog(s"offset is empty"))
     }
   }
 

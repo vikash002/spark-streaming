@@ -22,7 +22,7 @@ trait EmbeddedES extends FunSuite with BeforeAndAfterAll {
     super.beforeAll()
     esNode = createEmbeddedESNode()
     esNode.start()
-    TestConfiguration.withConfiguration(Map(Configuration.EsIndex -> esIndex))
+    TestConfiguration.withConfiguration(Map(Configuration.UserEsIndex -> esIndex))
   }
 
   override def afterAll(): Unit = {
@@ -34,17 +34,19 @@ trait EmbeddedES extends FunSuite with BeforeAndAfterAll {
   private def createEmbeddedESNode(): Node = {
     initializeWorkingDir()
     val settings = Settings.builder()
+      .put("cluster.name", "test")
       .put("path.home", esWorkingDir.getAbsolutePath)
       .put("path.conf", esWorkingDir.getAbsolutePath)
       .put("path.data", esWorkingDir.getAbsolutePath)
-     // .put("path.work", esWorkingDir.getAbsolutePath)
       .put("path.logs", esWorkingDir.getAbsolutePath)
       .put("http.port", esPort)
       .put("transport.tcp.port", esTransportPort)
-      .put("transport.type" , "local")
-     // .put("index.number_of_shards", "1")
-     // .put("index.number_of_replicas", "0")
+     // .put("transport.type","netty4")
+     // .put("http.type", "netty4")
       .build()
+   //val plugins: util.Collection[Class[_ <: Plugin]] = java.util.Arrays.asList(classOf[Netty4Plugin])
+   //new CustomEsNode(new Environment(settings),Version.CURRENT, plugins)
+    //new EsEmbeddedServer()
     new Node(settings)
   }
 

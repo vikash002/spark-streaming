@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import com.google.common.io.Resources
 import org.apache.log4j.Level._
 import org.spark.streaming.common.utils.{BaseSLog, Logger}
 
@@ -20,7 +19,7 @@ object Config {
   def init(file: String): Unit = {
     if(isIntialized.compareAndSet(false, true)) {
       Logger.log(this.getClass, INFO, BaseSLog("Config Initializing..."))
-      configMap = yamlMapper.readValue(Resources.getResource(file), new TypeReference[HashMap[String, String]](){})
+      configMap = yamlMapper.readValue(getClass.getClassLoader.getResource(file), new TypeReference[HashMap[String, String]](){})
       Logger.log(this.getClass, INFO, BaseSLog("Config Initializing finished"))
     }
   }
