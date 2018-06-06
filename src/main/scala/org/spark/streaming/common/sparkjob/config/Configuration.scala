@@ -155,7 +155,6 @@ object Configuration {
 
   def sparkConfiguration = {
     new SparkConf().setAppName(appName)
-      .setMaster(sparkMaster)
       .set("spark.cores.max", sparkMaxCores)
       .set("spark.executor.memory", sparkExecutorMemory)
       .set("spark.executorEnv.APP_ENV", appEnv)
@@ -166,5 +165,6 @@ object Configuration {
       .set("es.port", esPort)
       .set("es.http.timeout", esTimeout)
       .set("es.index.auto.create", autoCreate)
+      .set("es.nodes.wan.only", "true")
   }
 }

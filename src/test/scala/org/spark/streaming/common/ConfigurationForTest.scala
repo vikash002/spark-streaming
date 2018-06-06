@@ -22,7 +22,7 @@ trait ConfigurationForTest extends FunSuite with BeforeAndAfterAll {
       UserEsIndex -> "user_test_1",
       DriverEsIndex -> "driver_test",
       DemandSupplyEsIndex -> "demand_test_1",
-      EsNodes -> "ec2-52-56-201-201.eu-west-2.compute.amazonaws.com",
+      EsNodes -> "127.0.0.1",
       EsPort -> "9200",
       UserIndexType -> "user",
       DriverIndexType -> "driver",

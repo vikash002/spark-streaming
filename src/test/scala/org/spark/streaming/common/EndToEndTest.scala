@@ -40,6 +40,7 @@ class EndToEndTest extends FunSuite with BeforeAndAfterEach with EmbeddedDepende
     println("hello")
 
   }
+
   def getUserPayloads(fileName: String): Array[String] = {
     var res = new ListBuffer[String]
     val file = Resources.getResource(fileName).getFile
